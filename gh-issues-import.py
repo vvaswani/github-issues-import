@@ -173,16 +173,29 @@ def format_from_template(template_filename, template_data):
 	return template.substitute(template_data)
 
 def format_issue(template_data):
+	if 'Issue created by' in template_data['body']:
+		template_data['body'] = template_data['body']
+	else:
+		template_data['body'] += '_Issue created by [' + template_data['user_name'] + '](' + template_data['user_url'] + ') on ' + template_data['date'] + '_'
 	default_template = os.path.join(__location__, 'templates', 'issue.md')
 	template = config.get('format', 'issue_template', fallback=default_template)
 	return format_from_template(template, template_data)
 
 def format_pull_request(template_data):
+	if 'Pull request created by' in template_data['body']:
+		template_data['body'] = template_data['body']
+	else:
+		template_data['body'] += '_Pull request created by [' + template_data['user_name'] + '](' + template_data['user_url'] + ') on ' + template_data['date'] + '_'
 	default_template = os.path.join(__location__, 'templates', 'pull_request.md')
 	template = config.get('format', 'pull_request_template', fallback=default_template)
 	return format_from_template(template, template_data)
 
 def format_comment(template_data):
+	if 'Comment by' in template_data['body']:
+		template_data['body'] = template_data['body']
+	else:
+		template_data['body'] += '_Comment by [' + template_data['user_name'] + '](' + template_data['user_url'] + ') on ' + template_data['date'] + '_'
+
 	default_template = os.path.join(__location__, 'templates', 'comment.md')
 	template = config.get('format', 'comment_template', fallback=default_template)
 	return format_from_template(template, template_data)
@@ -326,7 +339,7 @@ def import_issues(issues):
 		
 		# Temporary fix for marking closed issues
 		if issue['closed_at']:
-			new_issue['title'] = "[CLOSED] " + new_issue['title']
+			new_issue['title'] = new_issue['title']
 		
 		if config.getboolean('settings', 'import-comments') and 'comments' in issue and issue['comments'] != 0:
 			num_new_comments += int(issue['comments'])
